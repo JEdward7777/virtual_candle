@@ -27,6 +27,27 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
+        #flame {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 30px;
+            background: radial-gradient(circle, #ff6600, #ff3300);
+            border-radius: 50%;
+            animation: flicker 1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.2);
+            }
+        }
+
         canvas {
             margin-top: 20px;
         }
@@ -38,21 +59,12 @@
         p {
             margin-top: 20px;
         }
-
-        #flameCanvas {
-            position: absolute;
-            top: -80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 100px;
-        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
     <div id="candle">
-        <canvas id="flameCanvas"></canvas>
+        <div id="flame"></div>
     </div>
     <div class="qr-container">
         <canvas id="qrCanvas"></canvas>
@@ -70,61 +82,26 @@
             });
         }
 
-        // Fire simulation using flameCanvas
-        function drawFire() {
-            const canvas = document.getElementById('flameCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 50;
-            canvas.height = 100;
+        // Adjust flame to always burn upwards using device orientation
+        function adjustFlameOrientation(event) {
+            const flame = document.getElementById('flame');
+            const gamma = event.gamma; // Left to right tilt in degrees (-90 to 90)
+            const beta = event.beta;   // Front to back tilt in degrees (-180 to 180)
 
-            const particles = [];
-
-            function Particle() {
-                this.x = canvas.width / 2 + (Math.random() - 0.5) * 10;
-                this.y = canvas.height - 20;
-                this.size = Math.random() * 3 + 2;
-                this.speedY = Math.random() * -1.5 - 1;
-                this.color = `rgba(255, ${Math.random() * 150 + 100}, 0, ${Math.random()})`;
+            if (flame) {
+                // Adjust rotation based on device orientation to keep the flame upright
+                const rotateX = -beta;
+                const rotateY = gamma;
+                flame.style.transform = `translateX(-50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
             }
-
-            Particle.prototype.update = function () {
-                this.y += this.speedY;
-                this.size *= 0.96;
-                if (this.size < 0.5) {
-                    this.size = 0;
-                }
-            };
-
-            Particle.prototype.draw = function () {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            };
-
-            function handleParticles() {
-                particles.push(new Particle());
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                    if (particles[i].size === 0) {
-                        particles.splice(i, 1);
-                        i--;
-                    }
-                }
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                handleParticles();
-                requestAnimationFrame(animate);
-            }
-
-            animate();
         }
 
-        // Initialize fire simulation
-        drawFire();
+        // Listen to device orientation events if supported
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', adjustFlameOrientation);
+        } else {
+            console.log('Device orientation not supported on this device.');
+        }
 
         // Initialize QR code generation
         generateQRCode();
