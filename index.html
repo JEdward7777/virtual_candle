@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candle Sharing</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #candle {
+            position: relative;
+            width: 50px;
+            height: 100px;
+            background: #fff;
+            border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #flame {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 30px;
+            background: radial-gradient(circle, #ff6600, #ff3300);
+            border-radius: 50%;
+            animation: flicker 1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.2);
+            }
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+
+        .qr-container {
+            margin-top: 20px;
+        }
+
+        p {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="candle">
+        <div id="flame"></div>
+    </div>
+    <div class="qr-container">
+        <canvas id="qrCanvas"></canvas>
+    </div>
+    <p>Share your light by scanning the QR code with another device!</p>
+
+    <script>
+        // Generate QR code linking to the current page
+        function generateQRCode() {
+            const url = window.location.href;
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, url, function (error) {
+                if (error) console.error(error);
+                console.log('QR Code generated!');
+            });
+        }
+
+        // Initialize QR code generation
+        generateQRCode();
+    </script>
+</body>
+</html>
