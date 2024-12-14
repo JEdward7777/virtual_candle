@@ -202,6 +202,10 @@ ul {
         .fullscreen-btn:hover {
             background: #e65500;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
@@ -219,7 +223,7 @@ ul {
         <canvas id="qrCanvas"></canvas>
     </div>
 
-    <button class="fullscreen-btn" onclick="enterFullScreen()">Go Full Screen</button>
+    <button id="fullscreenBtn" class="fullscreen-btn" onclick="enterFullScreen()">Go Full Screen</button>
 
     <script>
         // Generate QR code linking to the current page
@@ -243,6 +247,16 @@ ul {
                 body.msRequestFullscreen();
             }
         }
+
+        // Hide the full-screen button when in full-screen mode
+        document.addEventListener('fullscreenchange', () => {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            if (document.fullscreenElement) {
+                fullscreenBtn.classList.add('hidden');
+            } else {
+                fullscreenBtn.classList.remove('hidden');
+            }
+        });
 
         // Initialize QR code generation
         generateQRCode();
