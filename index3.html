@@ -37,26 +37,6 @@
             box-shadow: 0 0 15px 0 rgba(247, 93, 0, .4), 0 -6px 4px 0 rgba(247, 128, 0, .7);
         }
 
-        .glow {
-            z-index: -2;
-            position: absolute;
-            width: 26px;
-            height: 60px;
-            border-radius: 50% 50% 35% 35%;
-            transform: translateX(-50%);
-            background: rgba(0, 132, 255, 0.192);
-            box-shadow: 0 -40px 30px 0 #dc8a0c, 0 40px 50px 0 #dc8a0c, inset 3px 0 2px 0 rgba(0, 133, 255, .6), inset -3px 0 2px 0 rgba(0, 133, 255, .6);
-        }
-
-.glow:before {
-  width: 70%;
-  height: 60%;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.35);
-}
 
 .blinking-glow {
   position: absolute;
@@ -75,7 +55,6 @@
 <body>
     <div id="candle">
         <div class="blinking-glow"></div>
-        <div class="glow"></div>
         <div class="flame"></div>
         <div id="bob" style="color: white; text-align: center; position: absolute; top: 50%; left: 25%; transform: translate(-50%, -50%);">Hello</div>
     </div>
@@ -86,24 +65,58 @@
         const flame = document.querySelector('.flame');
         const glow = document.querySelector('.glow');
         const blinking_glow = document.querySelector('.blinking-glow');
+
+
+// Create a div element and add it to the page
+        const dot = document.createElement('div');
+        dot.style.width = '10px';
+        dot.style.height = '10px';
+        dot.style.background = 'green';
+        dot.style.position = 'absolute';
+        dot.style.top = '0px';
+        dot.style.left = '0px';
+        dot.style.zIndex = '10000';
+        document.body.appendChild(dot);
+
+
+
+        let speed = 2; // pixels per frame
+        const maxX = window.innerWidth - 10; // max x-coordinate
+        const maxY = window.innerHeight - 10; // max y-coordinate
+
+        let flame_tip_x = 0;
+        let flame_tip_y = 0;
+        const drift_alpha = .05;
+
+
         function animate() {
+            let screen_height = window.innerHeight;
+            let screen_width = window.innerWidth;
+
+            const flame_tip_rest_x = screen_width * 0.5 + screen_height*.02;
+            const flame_tip_rest_y = screen_height * 0.2;
+
+            const flame_base_x = flame_tip_rest_x;
+            const flame_base_y = flame_tip_rest_y + screen_height * 0.3;
+
+            const wander_size = screen_height*.05;
+            const random_x = flame_tip_rest_x + (Math.random()*2-1) * wander_size;
+            const random_y = flame_tip_rest_y + (Math.random()*2-1) * wander_size;
+
+            flame_tip_x = flame_tip_x*(1-drift_alpha) + random_x*drift_alpha;
+            flame_tip_y = flame_tip_y*(1-drift_alpha) + random_y*drift_alpha;
+
             sam += 1;
-            const screen_height = window.innerHeight;
-            const screen_width = window.innerWidth;
             document.getElementById('bob').innerHTML = screen_height + 'px ' + sam;
             const flame_height = (screen_height * 0.3);
             flame.style.height = flame_height + 'px';
             const flame_width = (screen_height * 0.06);
             flame.style.width = flame_width + 'px';
-            const glow_height = (screen_height * 0.1);
-            glow.style.height = glow_height + 'px';
-            const glow_width = (screen_height * 0.06);
-            glow.style.width = glow_width + 'px';
-            const glow_left = (screen_width*.5 + screen_height * .029);
-            glow.style.left = glow_left + 'px';
-            const glow_top = (screen_height * .21);
-            glow.style.top = glow_top + 'px';
-            //blinking_glow.style.left = "200px";
+            // const flame_left = (screen_width*.5 - .5*flame_width);
+            // flame.style.left = flame_left + 'px';
+            // const flame_top = (screen_height * .35 - .5*flame_height);
+            // flame.style.top = flame_top + 'px';
+
             const blinking_glow_width = flame_width * 4;
             blinking_glow.style.width = blinking_glow_width + 'px';
             const blinking_glow_height = flame_height * 1.5;
@@ -113,6 +126,22 @@
             const blinking_glow_top = (screen_height * .35 - .5*blinking_glow_height);
             blinking_glow.style.top = blinking_glow_top + 'px';
             //flame.style.transform = 'scale(2.5) translateY(-10%) translateX(+0px) rotate(' + (frame * 0.04) + 'deg)';
+
+
+
+
+            //dot.style.top = `${flame_tip_rest_y}px`;
+            //dot.style.left = `${flame_tip_rest_x}px`;
+            //dot.style.top = `${flame_base_y}px`;
+            //dot.style.left = `${flame_base_x}px`;
+            
+            //dot.style.top = `${random_y}px`;
+            //dot.style.left = `${random_x}px`;
+
+            dot.style.top = `${flame_tip_y}px`;
+            dot.style.left = `${flame_tip_x}px`;
+
+
             window.requestAnimationFrame(animate);
         }
         animate();
