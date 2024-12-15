@@ -79,19 +79,21 @@
         document.body.appendChild(dot);
 
 
+        let screen_height = window.innerHeight;
+        let screen_width = window.innerWidth;
 
         let speed = 2; // pixels per frame
         const maxX = window.innerWidth - 10; // max x-coordinate
         const maxY = window.innerHeight - 10; // max y-coordinate
 
-        let flame_tip_x = 0;
-        let flame_tip_y = 0;
+        let flame_tip_x = screen_width * 0.5;
+        let flame_tip_y = screen_height * 0.2;
         const drift_alpha = .05;
 
 
         function animate() {
-            let screen_height = window.innerHeight;
-            let screen_width = window.innerWidth;
+            screen_height = window.innerHeight;
+            screen_width = window.innerWidth;
 
             const flame_tip_rest_x = screen_width * 0.5 + screen_height*.02;
             const flame_tip_rest_y = screen_height * 0.2;
@@ -106,16 +108,21 @@
             flame_tip_x = flame_tip_x*(1-drift_alpha) + random_x*drift_alpha;
             flame_tip_y = flame_tip_y*(1-drift_alpha) + random_y*drift_alpha;
 
+            const flame_length = Math.sqrt((flame_base_x - flame_tip_x) * (flame_base_x - flame_tip_x) + (flame_base_y - flame_tip_y) * (flame_base_y - flame_tip_y));
+            const angle = Math.atan2(flame_base_y - flame_tip_y, flame_base_x - flame_tip_x);
+            const flame_angle = angle * (180 / Math.PI);
+
             sam += 1;
             document.getElementById('bob').innerHTML = screen_height + 'px ' + sam;
-            const flame_height = (screen_height * 0.3);
+            const flame_height = flame_length;
             flame.style.height = flame_height + 'px';
             const flame_width = (screen_height * 0.06);
             flame.style.width = flame_width + 'px';
-            // const flame_left = (screen_width*.5 - .5*flame_width);
-            // flame.style.left = flame_left + 'px';
-            // const flame_top = (screen_height * .35 - .5*flame_height);
-            // flame.style.top = flame_top + 'px';
+
+            flame.style.left = (flame_base_x - .5*flame_width) + 'px';
+            flame.style.top = (flame_base_y - flame_height) + 'px';
+            flame.style.transform = 'rotate(' + (flame_angle-90) + 'deg)';
+        
 
             const blinking_glow_width = flame_width * 4;
             blinking_glow.style.width = blinking_glow_width + 'px';
