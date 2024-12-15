@@ -79,7 +79,7 @@
         function generateQRCode() {
             const url = window.location.href;
             const canvas = document.getElementById('qrCanvas');
-            QRCode.toCanvas(canvas, url, function (error) {
+            QRCode.toCanvas(canvas, url, {color: {dark: '#000000', light: '#e9c18d'}}, function (error) {
                 if (error) console.error(error);
                 console.log('QR Code generated!');
             });
