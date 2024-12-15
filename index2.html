@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+        }
+        #candle {
+            background: url("Candle.jpg") no-repeat center top fixed;
+            -webkit-background-size: auto 100%;
+            -moz-background-size: auto 100%;
+            -o-background-size: auto 100%;
+            background-size: auto 100%;
+            height: 100%;
+            position: relative;
+
+        }
+
+        .flame {
+            width: 24px;
+            height: 120px;
+            position: absolute;
+            left: 50%;
+            transform-origin: 50% 100%;
+            transform: translateX(-50%);
+            bottom: 0;
+            border-radius: 50% 50% 20% 20%;
+            background: rgba(255, 255, 255, 1);
+            background: linear-gradient(white 80%, transparent);
+            animation: moveFlame 6s linear infinite, enlargeFlame 5s linear infinite;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="candle">
+        <div class="flame"></div>
+    </div>
+</body>
+</html>
+
