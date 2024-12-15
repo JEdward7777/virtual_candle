@@ -60,7 +60,11 @@
 
 .blinking-glow {
   position: absolute;
-    background-color: pink;
+    /*background-color: pink;*/
+  border-radius: 50%;
+  background: #ff6000;
+  filter: blur(60px);
+  animation: blinkIt .1s infinite;
   animation: blinkIt .1s infinite;
 }
 @keyframes blinkIt {
@@ -101,12 +105,12 @@
             glow.style.top = glow_top + 'px';
             //blinking_glow.style.left = "200px";
             const blinking_glow_width = flame_width * 4;
-            const blinking_glow_height = flame_height * 1;
             blinking_glow.style.width = blinking_glow_width + 'px';
+            const blinking_glow_height = flame_height * 1.5;
             blinking_glow.style.height = blinking_glow_height + 'px';
             const blinking_glow_left = (screen_width*.5 + screen_height * .029 - .5*blinking_glow_width);
             blinking_glow.style.left = blinking_glow_left + 'px';
-            const blinking_glow_top = (screen_height * .3 - .5*blinking_glow_height);
+            const blinking_glow_top = (screen_height * .35 - .5*blinking_glow_height);
             blinking_glow.style.top = blinking_glow_top + 'px';
             //flame.style.transform = 'scale(2.5) translateY(-10%) translateX(+0px) rotate(' + (frame * 0.04) + 'deg)';
             window.requestAnimationFrame(animate);
