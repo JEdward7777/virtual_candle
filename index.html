@@ -78,25 +78,6 @@
             transform: translateY(0);
         }
 
-        .fullscreen-btn {
-            position: fixed;
-            bottom: 1%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background: #e9c18d;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.6rem;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .fullscreen-btn:hover {
-            background: #e65500;
-        }
 
         .hidden {
             display: none;
@@ -108,12 +89,10 @@
     <div id="candle">
         <div class="blinking-glow"></div>
         <div class="flame"></div>
-        <div id="bob" style="color: white; text-align: center; position: absolute; top: 50%; left: 25%; transform: translate(-50%, -50%);">Hello</div>
     </div>
     <div class="qr-container">
         <canvas id="qrCanvas"></canvas>
     </div>
-    <button id="fullscreenBtn" class="fullscreen-btn" onclick="enterFullScreen()">Go Full Screen</button>
     <script>
         // Generate QR code linking to the current page
         function generateQRCode() {
@@ -125,44 +104,8 @@
             });
         }
 
-
-        // Full-screen function
-        function enterFullScreen() {
-            const body = document.body;
-            if (body.requestFullscreen) {
-                body.requestFullscreen();
-            } else if (body.webkitRequestFullscreen) { // Safari
-                body.webkitRequestFullscreen();
-            } else if (body.msRequestFullscreen) { // IE/Edge
-                body.msRequestFullscreen();
-            }
-        }
-
-        // Hide the full-screen button when in full-screen mode
-        document.addEventListener('fullscreenchange', () => {
-            const fullscreenBtn = document.getElementById('fullscreenBtn');
-            if (document.fullscreenElement) {
-                fullscreenBtn.classList.add('hidden');
-            } else {
-                fullscreenBtn.classList.remove('hidden');
-            }
-        });
-
-
         const flame = document.querySelector('.flame');
         const blinking_glow = document.querySelector('.blinking-glow');
-
-
-// Create a div element and add it to the page
-        const dot = document.createElement('div');
-        dot.style.width = '10px';
-        dot.style.height = '10px';
-        dot.style.background = 'green';
-        dot.style.position = 'absolute';
-        dot.style.top = '0px';
-        dot.style.left = '0px';
-        dot.style.zIndex = '10000';
-        document.body.appendChild(dot);
 
 
         let screen_height = window.innerHeight;
@@ -175,8 +118,6 @@
         let flame_tip_x = screen_width * 0.5;
         let flame_tip_y = screen_height * 0.45;
         const drift_alpha = .05;
-
-        let frame_count = 0;
 
         let acc = null;
         let accG = null;
@@ -201,13 +142,9 @@
                 screen_speed_y += acc.y;
                 screen_speed_x *= 0.9;
                 screen_speed_y *= 0.9;
-
-                dot.style.top = ( screen_height*.5 + screen_speed_y * 3) + 'px';
-                dot.style.left = ( screen_width*.5 - screen_speed_x * 3) + 'px';
             }
 
 
-            frame_count += 1;
             screen_height = window.innerHeight;
             screen_width = window.innerWidth;
 
@@ -236,7 +173,6 @@
             const phone_accelleration_x = 0;
             const phone_accelleration_y = 0;
 
-            document.getElementById('bob').innerHTML = screen_height + 'px ' + frame_count;
             const flame_height = flame_length;
             flame.style.height = flame_height + 'px';
             const flame_width = (screen_height * 0.06);
@@ -255,14 +191,6 @@
             blinking_glow.style.left = blinking_glow_left + 'px';
             const blinking_glow_top = (screen_height * .35 - .5*blinking_glow_height);
             blinking_glow.style.top = blinking_glow_top + 'px';
-            //flame.style.transform = 'scale(2.5) translateY(-10%) translateX(+0px) rotate(' + (frame * 0.04) + 'deg)';
-
-
-
-
-            // dot.style.top = `${flame_tip_y}px`;
-            // dot.style.left = `${flame_tip_x}px`;
-
 
 
             window.requestAnimationFrame(animate);
