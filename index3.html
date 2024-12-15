@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         html, body {
             height: 100%;
@@ -38,19 +39,31 @@
         }
 
 
-.blinking-glow {
-  position: absolute;
-    /*background-color: pink;*/
-  border-radius: 50%;
-  background: #ff6000;
-  filter: blur(60px);
-  animation: blinkIt .1s infinite;
-  animation: blinkIt .1s infinite;
-}
-@keyframes blinkIt {
-  50% { opacity: .8;}
-}
+        .blinking-glow {
+            position: absolute;
+                /*background-color: pink;*/
+            border-radius: 50%;
+            background: #ff6000;
+            filter: blur(60px);
+            animation: blinkIt .1s infinite;
+            animation: blinkIt .1s infinite;
+        }
+        @keyframes blinkIt {
+            50% { opacity: .8;} 
+        }
+
+        .qr-container {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            left: 0;
+            right: 0;
+            bottom: 10%;
+            transform: translateY(0);
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
     <div id="candle">
@@ -58,12 +71,23 @@
         <div class="flame"></div>
         <div id="bob" style="color: white; text-align: center; position: absolute; top: 50%; left: 25%; transform: translate(-50%, -50%);">Hello</div>
     </div>
+    <div class="qr-container">
+        <canvas id="qrCanvas"></canvas>
+    </div>
     <script>
-        sam = 1;
-        top_x = 0;
-        top_y = 0;
+        // Generate QR code linking to the current page
+        function generateQRCode() {
+            const url = window.location.href;
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, url, function (error) {
+                if (error) console.error(error);
+                console.log('QR Code generated!');
+            });
+        }
+
+
+
         const flame = document.querySelector('.flame');
-        const glow = document.querySelector('.glow');
         const blinking_glow = document.querySelector('.blinking-glow');
 
 
@@ -90,8 +114,10 @@
         let flame_tip_y = screen_height * 0.2;
         const drift_alpha = .05;
 
+        let frame_count = 0;
 
         function animate() {
+            frame_count += 1;
             screen_height = window.innerHeight;
             screen_width = window.innerWidth;
 
@@ -112,8 +138,7 @@
             const angle = Math.atan2(flame_base_y - flame_tip_y, flame_base_x - flame_tip_x);
             const flame_angle = angle * (180 / Math.PI);
 
-            sam += 1;
-            document.getElementById('bob').innerHTML = screen_height + 'px ' + sam;
+            document.getElementById('bob').innerHTML = screen_height + 'px ' + frame_count;
             const flame_height = flame_length;
             flame.style.height = flame_height + 'px';
             const flame_width = (screen_height * 0.06);
@@ -152,6 +177,9 @@
             window.requestAnimationFrame(animate);
         }
         animate();
+
+        // Initialize QR code generation
+        generateQRCode();
     </script>
 </body>
 </html>
