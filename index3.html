@@ -116,7 +116,35 @@
 
         let frame_count = 0;
 
+        let acc = null;
+        let accG = null;
+        let rot = null;
+
+        let screen_speed_x = 0;
+        let screen_speed_y = 0;
+
+
+        if( window.DeviceOrientationEvent ) {
+            window.addEventListener('devicemotion', function(event) {
+                acc = event.acceleration;
+                accG = event.accelerationIncludingGravity;
+                rot = event.rotationRate;
+            });
+        }
+
         function animate() {
+
+            if( accG !== null ) {
+                screen_speed_x += acc.x;
+                screen_speed_y += acc.y;
+                screen_speed_x *= 0.9;
+                screen_speed_y *= 0.9;
+
+                dot.style.top = ( screen_height*.5 + screen_speed_y * 3) + 'px';
+                dot.style.left = ( screen_width*.5 - screen_speed_x * 3) + 'px';
+            }
+
+
             frame_count += 1;
             screen_height = window.innerHeight;
             screen_width = window.innerWidth;
@@ -134,9 +162,17 @@
             flame_tip_x = flame_tip_x*(1-drift_alpha) + random_x*drift_alpha;
             flame_tip_y = flame_tip_y*(1-drift_alpha) + random_y*drift_alpha;
 
-            const flame_length = Math.sqrt((flame_base_x - flame_tip_x) * (flame_base_x - flame_tip_x) + (flame_base_y - flame_tip_y) * (flame_base_y - flame_tip_y));
-            const angle = Math.atan2(flame_base_y - flame_tip_y, flame_base_x - flame_tip_x);
+
+            const speed_sensitivity = 2;
+            const flame_tip_with_speed_x = flame_tip_x - screen_speed_x * speed_sensitivity;
+            const flame_tip_with_speed_y = flame_tip_y + screen_speed_y * speed_sensitivity;
+
+            const flame_length = Math.sqrt((flame_base_x - flame_tip_with_speed_x) * (flame_base_x - flame_tip_with_speed_x) + (flame_base_y - flame_tip_with_speed_y) * (flame_base_y - flame_tip_with_speed_y));
+            const angle = Math.atan2(flame_base_y - flame_tip_with_speed_y, flame_base_x - flame_tip_with_speed_x);
             const flame_angle = angle * (180 / Math.PI);
+
+            const phone_accelleration_x = 0;
+            const phone_accelleration_y = 0;
 
             document.getElementById('bob').innerHTML = screen_height + 'px ' + frame_count;
             const flame_height = flame_length;
@@ -162,16 +198,9 @@
 
 
 
-            //dot.style.top = `${flame_tip_rest_y}px`;
-            //dot.style.left = `${flame_tip_rest_x}px`;
-            //dot.style.top = `${flame_base_y}px`;
-            //dot.style.left = `${flame_base_x}px`;
-            
-            //dot.style.top = `${random_y}px`;
-            //dot.style.left = `${random_x}px`;
+            // dot.style.top = `${flame_tip_y}px`;
+            // dot.style.left = `${flame_tip_x}px`;
 
-            dot.style.top = `${flame_tip_y}px`;
-            dot.style.left = `${flame_tip_x}px`;
 
 
             window.requestAnimationFrame(animate);
